@@ -2,6 +2,7 @@ import { validationResult } from "express-validator";
 import { loginUser, signupUser } from "../services/authServices.js";
 
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt.js";
+import { blacklistedTokens } from "../../../database/blacklistedTokens.js";
 
 export const signup = async (req, res) => {
   try {
@@ -95,11 +96,7 @@ export const login = async (req, res) => {
   }
 };
 
-
-export const profile = async (
-  req,
-  res
-) => {
+export const profile = async (req, res) => {
   try {
     return res.status(200).json({
       success: true,
@@ -110,8 +107,36 @@ export const profile = async (
 
     return res.status(500).json({
       success: false,
-      message:
-        "Internal server error",
+      message: "Internal server error",
+    });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    const authheader = req.headers.authorization;
+
+    const token = authheader?.split(" ")[1];
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: "Token missing",
+      });
+    }
+
+    blacklistedTokens.push(token);
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };

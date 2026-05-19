@@ -8,6 +8,7 @@ import cors from "cors";
 
 import { router } from "./modules/statefull_Auth/routes/authRoutes.js";
 import { statelessAuthrouter } from "./modules/stateless_auth/routes/authroutes.js";
+import { authrouter } from "./modules/hybrid_Auth/routes/authRoutes.js";
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use(
 
 app.use("/api/statefullauth", router);
 app.use("/api/statelessauth", statelessAuthrouter);
+app.use("/api/hybrid-auth", authrouter);
 
 app.get("/", (req, res) => {
   return res.status(200).json({
