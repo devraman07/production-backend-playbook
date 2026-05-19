@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import { router } from "./modules/statefull_Auth/routes/authRoutes.js";
+import { statelessAuthrouter } from "./modules/stateless_auth/routes/authroutes.js";
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use(
 );
 
 app.use("/api/statefullauth", router);
+app.use("/api/statelessauth", statelessAuthrouter);
 
 app.get("/", (req, res) => {
   return res.status(200).json({
