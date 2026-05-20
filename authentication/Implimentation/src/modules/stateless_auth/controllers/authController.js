@@ -1,8 +1,15 @@
 import { validationResult } from "express-validator";
-import { loginUser, signupUser } from "../services/authServices.js";
+import {
+  loginUser,
+  passreset,
+  resetPass,
+  signupUser,
+} from "../services/authServices.js";
 
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt.js";
 import { blacklistedTokens } from "../../../database/blacklistedTokens.js";
+import { refreshTokens } from "../../../database/refreshtokens.js";
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
   try {
@@ -74,6 +81,8 @@ export const login = async (req, res) => {
 
     const refreshToken = generateRefreshToken(payload);
 
+    refreshTokens.push(refreshToken);
+
     return res.status(200).json({
       success: true,
       message: "user logged In successfully",
@@ -130,6 +139,102 @@ export const logout = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const refreshtoken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "refreshToken required",
+      });
+    }
+
+    const tokenExists = refreshTokens.includes(refreshToken);
+
+    if (!tokenExists) {
+      return res.status(403).json({
+        success: false,
+        message: "invalid refresh Token",
+      });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+    const idx = refreshTokens.indexOf(refreshToken);
+
+    refreshTokens.splice(idx, 1);
+
+    const payload = {
+      id: decoded.id,
+      email: decoded.email,
+      role: decoded.role,
+    };
+
+    const newAccessToken = generateAccessToken(payload);
+
+    const newRefresToken = generateRefreshToken(payload);
+
+    refreshTokens.push(newRefresToken);
+    return res.status(200).json({
+      success: true,
+
+      accessToken: newAccessToken,
+
+      refreshToken: newRefresToken,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(403).json({
+      success: false,
+      message: "Invalid refresh token",
+    });
+  }
+};
+
+export const passowrdReset = async (req, res) => {
+  try {
+    await resetPass(req.body);
+
+    return res.status(200).json({
+      success: true,
+      message: "If account exists, reset link sent",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const passHandler = async (req, res) => {
+  try {
+    const result = await passreset(req.body);
+
+    if (!result.success) {
+      return res.status(200).json({
+        success: true,
+        message: result.error,
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successful",
     });
   } catch (error) {
     console.error(error);
