@@ -29,9 +29,7 @@ export const register = (req, res) => {
 
 export const login = (req, res) => {
   try {
-    console.log("login controller hit");
-
-    console.log(req.body);
+    
     const result = loginUser(req.body);
 
     if (!result.success) {

@@ -32,12 +32,7 @@ export const registerUser = ({ name, email, password, age }) => {
 export const loginUser = ({ email, password }) => {
   const user = users.find((u) => u.email === email);
 
-  console.log("service hit");
-
-  console.log("incoming email:", email);
-  console.log("incoming password:", password);
-
-  console.log("all users:", users);
+  
 
   if (!user) {
     return {
