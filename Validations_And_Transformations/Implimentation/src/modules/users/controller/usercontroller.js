@@ -156,3 +156,20 @@ export const logOut = (req, res) => {
     });
   }
 };
+
+
+
+export const adminDashboard =(req, res) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      message: "Welcome to the admin dashboard",
+    });
+  } catch (error) {    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    })
+  }
+}

@@ -1,8 +1,10 @@
 import express from 'express';
 import { userRouter } from './modules/users/route/userRoutes.js';
+import {hotelRouter} from "./modules/Hotels/routes/hotelRoutes.js";
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import "./database/adminSeed.js";
 
 dotenv.config();
 
@@ -26,6 +28,7 @@ app.use(session({
 
 
 app.use("/api/users", userRouter);
+app.use("/api/hotels", hotelRouter);
 
 
 

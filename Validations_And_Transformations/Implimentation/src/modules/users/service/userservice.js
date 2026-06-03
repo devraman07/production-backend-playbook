@@ -1,6 +1,7 @@
 import crypto from "crypto";
 
 import { users } from "../../../database/users.js";
+import {ROLES} from "../../../shared/constants/roles.js";
 
 export const registerUser = ({ name, email, password, age }) => {
   const existingUser = users.find((u) => u.email === email);
@@ -18,6 +19,7 @@ export const registerUser = ({ name, email, password, age }) => {
     email: email,
     password: password,
     age: age,
+    role : ROLES.USER,
     createdAt: new Date(),
   };
 
