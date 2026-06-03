@@ -23,6 +23,8 @@ export const registerUser = ({ name, email, password, age }) => {
 
   users.push(newUser);
 
+  
+
   return {
     success: true,
     user: newUser,
