@@ -4,6 +4,7 @@ import {
   generaterefreshToken,
 } from "../../../shared/utils/jwt.js";
 import { blacklistedTokens } from "../../../database/blacklistedTokens.js";
+import {ROLES} from "../../../shared/constants/roles.js";
 
 export const register = (req, res) => {
   try {
@@ -20,12 +21,14 @@ export const register = (req, res) => {
       id: result.user.id,
       email: result.user.email,
       name: result.user.name,
+      role: result.user.role,
     };
 
     const payload = {
       id: result.user.id,
       email: result.user.email,
       name: result.user.name,
+      role: result.user.role,
     };
 
     const accessToken = generateAccessToken(payload);
@@ -37,6 +40,7 @@ export const register = (req, res) => {
       email: result.user.email,
       age: result.user.age,
       createdAt: result.user.createdAt,
+      role: result.user.role,
     };
 
     return res.status(201).json({
@@ -71,12 +75,14 @@ export const login = (req, res) => {
       id: result.user.id,
       email: result.user.email,
       name: result.user.name,
+      role: result.user.role,
     };
 
     const payload = {
       id: result.user.id,
       email: result.user.email,
       name: result.user.name,
+      role: result.user.role,
     };
 
     const accessToken = generateAccessToken(payload);
@@ -86,6 +92,7 @@ export const login = (req, res) => {
       id: result.user.id,
       name: result.user.name,
       email: result.user.email,
+      role: result.user.role,
       age: result.user.age,
       createdAt: result.user.createdAt,
     };
