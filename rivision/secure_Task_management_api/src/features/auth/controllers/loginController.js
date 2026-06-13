@@ -3,16 +3,16 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../../shared/utils/jwt.js";
-import { registerService } from "../services/registerService.js";
+import { loginService } from "../services/loginservice.js";
 
-export const registerController =  async (req, res) => {
+export const loginController = async (req, res) => {
   try {
-    const result = await  registerService(req.body);
+    const result = await loginService(req.body);
 
     if (!result.success) {
-      return res.status(409).json({
+      return res.status(401).json({
         success: false,
-        error: result.message,
+        message: result.message,
       });
     }
 
@@ -30,12 +30,11 @@ export const registerController =  async (req, res) => {
       role: result.user.role,
     };
 
-    const refreshToken = generateRefreshToken(payload);
-
     const accessToken = generateAccessToken(payload);
 
-    refreshTokens.push(refreshToken);
-    
+    const refreshToken = generateRefreshToken(payload);
+
+   refreshTokens.push(refreshToken);
 
     const safeUser = {
       id: result.user.id,
@@ -44,18 +43,19 @@ export const registerController =  async (req, res) => {
       role: result.user.role,
     };
 
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
-      message: "User registered successsfully",
       user: safeUser,
+      message: "Login successfully",
       accessToken: accessToken,
       refreshToken: refreshToken,
     });
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      success: true,
+      data: null,
       error: error.message,
-      message: "Internal server error in controller layer",
+      message: "Internal server error in the controller layer",
     });
   }
 };

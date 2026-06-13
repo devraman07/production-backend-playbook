@@ -6,7 +6,7 @@ import { generateHashedpassword } from "../../../shared/utils/hashedPassword.js"
 
 
 
-export const registerService = ({
+export const registerService = async ({
     name , email , password 
 }) => {
        
@@ -20,7 +20,7 @@ export const registerService = ({
         }
     }
 
-    const hashedPassword = generateHashedpassword(password);
+    const hashedPassword = await generateHashedpassword(password);
 
     
 
