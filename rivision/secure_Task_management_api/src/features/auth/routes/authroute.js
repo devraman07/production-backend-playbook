@@ -7,6 +7,8 @@ import { loginTransformer } from "../transoformers/loginTransformer.js";
 import { loginController } from "../controllers/loginController.js";
 import { refreshController } from "../controllers/refreshCOntroller.js";
 import { logoutController } from "../controllers/lououtController.js";
+import { authMiddleware } from "../../../middlewares/auth.middileware.js";
+import { userProfile } from "../controllers/profileController.js";
 
 
 
@@ -16,3 +18,4 @@ AuthRouter.post('/register', registerTransformer, registerVlaidator, registerCon
 AuthRouter.post("/login", loginValidator, loginTransformer, loginController);
 AuthRouter.post("/refresh", refreshController);
 AuthRouter.post("/logout", logoutController);
+AuthRouter.get("/profile", authMiddleware, userProfile);

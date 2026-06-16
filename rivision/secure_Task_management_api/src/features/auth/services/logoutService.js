@@ -1,3 +1,4 @@
+import { blacklistedTokens } from "../../../data/blacklistedTokens.js";
 import { refreshTokens } from "../../../data/refreshTokens.js";
 
 
@@ -22,7 +23,11 @@ export const logOutService = (refreshToken) => {
         }
     }
 
+    blacklistedTokens.push(index);
+
     refreshTokens.splice(index, 1);
+
+
 
     return {
         success : true,

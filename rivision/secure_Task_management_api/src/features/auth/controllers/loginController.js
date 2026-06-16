@@ -7,7 +7,9 @@ import { loginService } from "../services/loginservice.js";
 
 export const loginController = async (req, res) => {
   try {
+    
     const result = await loginService(req.body);
+
 
     if (!result.success) {
       return res.status(401).json({

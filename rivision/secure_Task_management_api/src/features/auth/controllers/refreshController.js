@@ -4,7 +4,7 @@ export const refreshController = (req, res) => {
   try {
     const { refreshToken } = req.body;
 
-    const result = refreshService(refreshToken);
+    const result = refreshService({ refreshToken }); 
 
     if (!result.success) {
       return res.status(result.statusCode).json({

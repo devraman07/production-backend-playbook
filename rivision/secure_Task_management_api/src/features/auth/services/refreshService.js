@@ -21,7 +21,7 @@ export const refreshService = ({ refreshToken }) => {
     };
   }
 
-  const decode = verifyRefreshTokens(refreshToken);
+  const decoded = verifyRefreshTokens(refreshToken); 
 
   const payload = {
     id: decoded.id,
@@ -30,11 +30,10 @@ export const refreshService = ({ refreshToken }) => {
     role: decoded.role,
   };
 
-
   const newAccessToken = generateAccessToken(payload);
 
   return {
-    success : true, 
-    accessToken : newAccessToken,
-  }
+    success: true,
+    accessToken: newAccessToken,
+  };
 };
