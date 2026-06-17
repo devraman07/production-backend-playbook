@@ -9,6 +9,7 @@ import { refreshController } from "../controllers/refreshCOntroller.js";
 import { logoutController } from "../controllers/lououtController.js";
 import { authMiddleware } from "../../../middlewares/auth.middileware.js";
 import { userProfile } from "../controllers/profileController.js";
+import { refreshMiddleware } from "../../../middlewares/refresh.middleware.js";
 
 
 
@@ -16,6 +17,6 @@ export const AuthRouter = express.Router();
 
 AuthRouter.post('/register', registerTransformer, registerVlaidator, registerController);
 AuthRouter.post("/login", loginValidator, loginTransformer, loginController);
-AuthRouter.post("/refresh", refreshController);
+AuthRouter.post("/refresh", refreshMiddleware, refreshController);
 AuthRouter.post("/logout", logoutController);
 AuthRouter.get("/profile", authMiddleware, userProfile);

@@ -23,7 +23,7 @@ export const logOutService = (refreshToken) => {
         }
     }
 
-    blacklistedTokens.push(index);
+    blacklistedTokens.push(refreshToken);
 
     refreshTokens.splice(index, 1);
 

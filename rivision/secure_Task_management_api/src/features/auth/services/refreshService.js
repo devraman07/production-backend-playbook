@@ -2,7 +2,7 @@ import { refreshTokens } from "../../../data/refreshTokens.js";
 import { verifyRefreshTokens } from "../../../shared/security/verifyRefreshToken.js";
 import { generateAccessToken } from "../../../shared/utils/jwt.js";
 
-export const refreshService = ({ refreshToken }) => {
+export const refreshService = (refreshToken ) => {
   if (!refreshToken) {
     return {
       success: false,
@@ -22,6 +22,8 @@ export const refreshService = ({ refreshToken }) => {
   }
 
   const decoded = verifyRefreshTokens(refreshToken); 
+
+
 
   const payload = {
     id: decoded.id,

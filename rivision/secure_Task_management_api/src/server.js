@@ -3,6 +3,7 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { AuthRouter } from "./features/auth/routes/authroute.js";
+import { userRouter } from "./features/users/routes/userRoutes.js";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(session({
 
 
 app.use("/api/v1/auth", AuthRouter);
+app.use("/api/v1/users", userRouter);
 
 app.get("/", (req, res) => {
     res.send("Task management api working");
