@@ -5,7 +5,8 @@ export const tasks = [
     description: "Implement signup and login",
     status: "pending",
     assignedTo: 3,
-    createdBy: 2
+    createdBy: 2,
+    managerId : 2,
   },
   {
     id: 2,
@@ -13,7 +14,8 @@ export const tasks = [
     description: "Resolve production bugs",
     status: "in-progress",
     assignedTo: 3,
-    createdBy: 2
+    createdBy: 2,
+    managerId : 2,
   },
   {
     id: 3,
@@ -21,6 +23,7 @@ export const tasks = [
     description: "Deploy to cloud",
     status: "completed",
     assignedTo: 2,
-    createdBy: 1
+    createdBy: 1,
+    managerId : 1,
   }
 ];

@@ -10,7 +10,16 @@ export const registerService = async ({
     name , email , password 
 }) => {
        
+     
     try {
+
+      if(!name || !email || !password) {
+        return {
+            success : false,
+            message : "all fields are required"
+         }
+    }
+
        const existingUser = users.find((u) => u.email === email);
 
        if(existingUser) {

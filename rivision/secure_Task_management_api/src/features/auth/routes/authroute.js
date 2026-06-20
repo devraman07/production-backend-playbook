@@ -16,7 +16,7 @@ import { refreshMiddleware } from "../../../middlewares/refresh.middleware.js";
 export const AuthRouter = express.Router();
 
 AuthRouter.post('/register', registerTransformer, registerVlaidator, registerController);
-AuthRouter.post("/login", loginValidator, loginTransformer, loginController);
+AuthRouter.post("/login",  loginTransformer, loginValidator, loginController);
 AuthRouter.post("/refresh", refreshMiddleware, refreshController);
 AuthRouter.post("/logout", logoutController);
 AuthRouter.get("/profile", authMiddleware, userProfile);
