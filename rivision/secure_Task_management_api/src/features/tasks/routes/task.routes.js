@@ -10,6 +10,11 @@ import { taskOwnerMiddleware } from "../../../middlewares/taskOwner.middleware.j
 import { updateTaskTransformer } from "../transformers/updatetask.transformer.js";
 import { updateTaskvalidator } from "../validators/updateTask.validator.js";
 import { updatetaskcontroller } from "../controllers/updatetask.controller.js";
+import { deleteTaskController } from "../controllers/deleteTask.controller.js";
+import { taskAssignTransformer } from "../transformers/assigntask.transformer.js";
+import { assignValidator } from "../validators/assignTask.transformer.js";
+import { assigntaskController } from "../controllers/assignTask.controller.js";
+import { taskAssignedMiddleware } from "../../../middlewares/taskassignto.middleware.js";
 
 export const taskRouter = express.Router();
 
@@ -36,3 +41,25 @@ taskRouter.patch("/:id", authMiddleware,
   updatetaskcontroller
   
 );
+
+taskRouter.delete("/:id", authMiddleware,
+  roleMiddleware(ROLES.MANAGER),
+  taskOwnerMiddleware,
+  deleteTaskController
+)
+
+
+taskRouter.patch("/:id/assign", authMiddleware, roleMiddleware(ROLES.MANAGER), 
+taskAssignTransformer,
+assignValidator, 
+assigntaskController);
+
+
+taskRouter.patch("/:id/status", 
+  authMiddleware,
+  roleMiddleware(ROLES.MEMBER),
+  taskAssignedMiddleware,
+  updateTaskTransformer,
+  updateTaskvalidator,
+  updatetaskcontroller
+)

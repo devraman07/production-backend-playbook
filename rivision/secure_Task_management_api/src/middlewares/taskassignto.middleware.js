@@ -1,35 +1,31 @@
 import { tasks } from "../data/tasks.js";
 
-export const taskOwnerMiddleware = (req, res, next) => {
+export const taskAssignedMiddleware = (req, res, next) => {
   try {
     const taskId = req.params.id;
-    const curruserId = req.user.id;
+    const currUserId = req.user.id;
 
     const task = tasks.find((task) => task.id === taskId);
 
     if (!task) {
       return res.status(404).json({
         success: false,
-        message: "task not found",
+        messge: " tak not found",
       });
     }
 
-    if (task.managerId !== curruserId) {
+    if (task.assignedTo !== currUserId) {
       return res.status(403).json({
         success: false,
-        message: "Must be a manager to update a task",
+        message: "not assigne to this task",
       });
     }
 
     req.task = task;
-    console.log(tasks);
-console.log(taskId);
-
-    next();
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Task ownership check failed",
+      message: "Task assignee check failed",
     });
   }
 };
