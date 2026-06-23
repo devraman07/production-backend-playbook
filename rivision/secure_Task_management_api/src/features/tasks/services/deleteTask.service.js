@@ -1,25 +1,13 @@
-import { tasks } from "../../../data/tasks.js"
+import { taskRepo } from "../../../Repositores/task.repository.js";
 
+export const deleteTaskService = (
+  task
+) => {
+  taskRepo.delete(task.id);
 
-export const deleteTaskService = (task) => {
-    const taskIdx = tasks.findIndex((
-        t
-    )=> {
-        t.id === task.id
-    });
-
-    if(!taskIdx) {
-        return {
-            success : false,
-            statusCode : 404,
-            message : "task not found",
-        }
-    }
-
-    tasks.splice(taskIdx, 1);
-
-    return {
-        success : true,
-        message : "task deleted success fully"
-    };
-}
+  return {
+    success: true,
+    message:
+      "Task deleted successfully",
+  };
+};

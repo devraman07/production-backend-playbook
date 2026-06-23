@@ -1,25 +1,36 @@
-import { users } from "../../../data/users.js"
+import { userrepo } from "../../../Repositores/User.repository.js";
+import { taskRepo } from "../../../Repositores/task.repository.js";
 
 export const assignTaskService = (
-    task , assignedTo
+  task,
+  assignedTo
 ) => {
-    const assignedUser = users.find(
-        (user) => user.id === assignedTo
+  const assignedUser =
+    userrepo.findById(
+      assignedTo
     );
 
-    if(!assignedUser) {
-        return {
-            success : false,
-            statusCode : 404,
-            message : "Assigned user not found",
-        };
-    }
-
-    task.assignedTo = assignedTo;
-
+  if (!assignedUser) {
     return {
-        success : true,
-        task : task,
-        message : "task assigned succesfully",
+      success: false,
+      statusCode: 404,
+      message:
+        "Assigned user not found",
     };
+  }
+
+  const updatedTask =
+    taskRepo.update(
+      task.id,
+      {
+        assignedTo,
+      }
+    );
+
+  return {
+    success: true,
+    task: updatedTask,
+    message:
+      "Task assigned successfully",
+  };
 };

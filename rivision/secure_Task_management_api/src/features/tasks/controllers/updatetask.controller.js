@@ -20,7 +20,8 @@ export const updatetaskcontroller = (req, res) => {
 
         return res.status(200).json({
             success : true,
-            task : task,
+            task : result.task,
+            message : result.message,
         })
     } catch (error) {
         

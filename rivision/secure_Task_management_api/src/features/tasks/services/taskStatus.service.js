@@ -1,14 +1,17 @@
+import { taskRepo } from "../../../Repositores/task.repository";
 
 
 
 export const updateStatusService = (
     task, status
 ) => {
-    task.status = status;
+    const updateTask = taskRepo.update(task.id, {
+        status
+    });
 
     return {
         success : true,
-        task : task,
+        task :updateTask,
         message :" status updated sucessfully",
     };
 };

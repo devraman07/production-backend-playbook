@@ -1,31 +1,35 @@
-import { users } from "../../../data/users.js"
+import { taskRepo } from "../../../Repositores/task.repository.js";
+import { userrepo } from "../../../Repositores/User.repository.js";
 
 export const updatetaskservice = (
-    task , updateData
+  task,
+  updateData
 ) => {
-    const userAssignedTo = users.find((user) => user.id === updateData.assignedTo);
+  if (updateData.assignedTo) {
+    const userAssignedTo =
+      userrepo.findById(
+        updateData.assignedTo
+      );
 
-    if(!userAssignedTo) {
-        return {
-            success : false,
-            statuscode : 404,
-            message : "user not found",
-        };
-        task.assignedTo = updateData.assignedTo;
+    if (!userAssignedTo) {
+      return {
+        success: false,
+        statusCode: 404,
+        message: "User not found",
+      };
     }
-    
-    if(updateData.title) {
-        task.title = updateData.title;
-    }
+  }
 
-    if(updateData.description) {
-        task.description = updateData.description
-    };
+  const updatedTask =
+    taskRepo.update(
+      task.id,
+      updateData
+    );
 
-    return {
-        success : true,
-        task : task,
-        message : "task updated successfully"
-    }
-
-}
+  return {
+    success: true,
+    task: updatedTask,
+    message:
+      "Task updated successfully",
+  };
+};

@@ -1,5 +1,6 @@
 import { ROLES } from "../../../data/roles.js";
-import { tasks } from "../../../data/tasks.js";
+
+import { taskRepo } from "../../../Repositores/task.repository.js";
 
 
 export const viewTasksService = (user) => {
@@ -7,15 +8,15 @@ export const viewTasksService = (user) => {
     let filteredTasks = [];
 
     if(user.role === ROLES.ADMIN) {
-        filteredTasks = tasks;
+        filteredTasks = taskRepo.findAll();
     }
 
     else if(user.role === ROLES.MANAGER) {
-        filteredTasks = tasks.filter((task) => task.managerId === user.id);
+        filteredTasks = taskRepo.findByManager(user);
     }   
 
     else if (user.role === ROLES.MEMBER) {
-        filteredTasks = tasks.filter((task) => task.assignedTo === user.id);
+        filteredTasks = taskRepo.findByAssignee(user);
     }
 
 

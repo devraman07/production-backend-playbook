@@ -1,13 +1,12 @@
-import { tasks } from "../../../data/tasks.js";
-import { users } from "../../../data/users.js"
+import { taskRepo } from "../../../Repositores/task.repository.js";
+import { userrepo } from "../../../Repositores/User.repository.js";
 
 
 
 export const createTaskservice = (managerId, taskData) => {
     
-    const assignedUser = users.find(
-        (user) => user.id === taskData.assignedTo
-    );
+    const assignedUser = userrepo.findById(taskData.assignedTo);
+
 
     if(!assignedUser) {
         return {
@@ -27,10 +26,12 @@ export const createTaskservice = (managerId, taskData) => {
         managerId : managerId
     };
 
+    const savedTask =   taskRepo.create(newTask);
+
     return {
         success : true,
         statuscode : 201,
-        task : newTask,
+        task : savedTask,
         message : "task created successfully",
     }
 }
