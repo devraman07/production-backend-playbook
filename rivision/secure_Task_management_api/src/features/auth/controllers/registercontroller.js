@@ -1,8 +1,3 @@
-import { refreshTokens } from "../../../data/refreshTokens.js";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "../../../shared/utils/jwt.js";
 import { registerService } from "../services/registerService.js";
 
 export const registerController =  async (req, res) => {
@@ -16,40 +11,19 @@ export const registerController =  async (req, res) => {
       });
     }
 
-    req.session.user = {
-      id: result.user.id,
-      name: result.user.name,
-      email: result.user.email,
-      role: result.user.role,
-    };
+    req.session.user = result.sessionUser;
 
-    const payload = {
-      id: result.user.id,
-      name: result.user.name,
-      email: result.user.email,
-      role: result.user.role,
-    };
-
-    const refreshToken = generateRefreshToken(payload);
-
-    const accessToken = generateAccessToken(payload);
-
-    refreshTokens.push(refreshToken);
+ 
     
 
-    const safeUser = {
-      id: result.user.id,
-      name: result.user.name,
-      email: result.user.email,
-      role: result.user.role,
-    };
+    
 
-    return res.status(201).json({
+    return res.status(result.statusCode).json({
       success: true,
-      message: "User registered successsfully",
-      user: safeUser,
-      accessToken: accessToken,
-      refreshToken: refreshToken,
+      message: result.message,
+      user: result.user,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
     });
   } catch (error) {
     return res.status(500).json({
