@@ -1,7 +1,8 @@
-import { users } from "../../../data/users.js";
+
+import { userrepo } from "../../../Repositores/User.repository.js";
 
 export const deleteUserService = (targetUserId) => {
-  const userIndex = users.findIndex((u) => u.id === targetUserId);
+  const userIndex = userrepo.findById(targetUserId);
 
   if (userIndex === -1) {
     return {
@@ -11,7 +12,7 @@ export const deleteUserService = (targetUserId) => {
     };
   }
 
-  users.splice(userIndex, 1);
+  userrepo.delete(userIndex);
 
   return {
     success : true,

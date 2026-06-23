@@ -1,13 +1,17 @@
-import { users } from "../../../data/users.js"
+
+import { userrepo } from "../../../Repositores/User.repository.js";
 
 export const getallUsersService = () => {
-    const safeUsers = users.map((user) => ({
+
+  const user = userrepo.findAll();
+     
+    const safeUsers = ({
         id : user.id,
         name : user.name,
         email : user.email,
         role : user.role
 
-    }));
+    });
 
     return {
         success : true,

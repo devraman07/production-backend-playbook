@@ -1,4 +1,5 @@
 import { users } from "../../../data/users.js";
+import { userrepo } from "../../../Repositores/User.repository.js";
 
 
 
@@ -12,7 +13,7 @@ export const fetchUserProfileService = (id)  => {
         };
     }
 
-    const profile = users.find((u) => u.id === id);
+    const profile = userrepo.findById(id);
 
     const safeUser = {
         id : profile.id,

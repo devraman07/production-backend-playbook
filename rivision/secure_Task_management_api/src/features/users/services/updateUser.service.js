@@ -1,13 +1,11 @@
-import { users } from "../../../data/users.js"
+import { userrepo } from "../../../Repositores/User.repository.js";
 
 
 
 export const updateUserservice = (
     targetUserId, updateData
 ) => {
-    const user = users.find(
-        (u) => u.id === targetUserId
-    );
+    const user = userrepo.findById(targetUserId);
 
     if(updateData.name) {
         user.name = updateData.name;
