@@ -1,9 +1,10 @@
-import { users } from "../../../data/users.js"
+import { userrepo } from "../../../Repositores/User.repository.js";
 
 
 
 export const profileservice = (userId) => {
-    const user = users.find((u) => u.id === userId);
+    const user = userrepo.findById(userId);
+
 
     if (!user) {
     return {
@@ -22,6 +23,7 @@ export const profileservice = (userId) => {
 
   return {
     success: true,
+    statusCode : 200,
     user: safeUser,
   };
 };

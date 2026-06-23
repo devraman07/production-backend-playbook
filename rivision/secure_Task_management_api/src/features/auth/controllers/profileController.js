@@ -12,7 +12,7 @@ export const userProfile = (req, res) => {
       });
     }
 
-    return res.status(200).json({
+    return res.status(result.statusCode).json({
       success: true,
       user: result.user,
     });

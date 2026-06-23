@@ -25,7 +25,7 @@ export const loginController = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      success: true,
+      success: false,
       data: null,
       error: error.message,
       message: "Internal server error in the controller layer",

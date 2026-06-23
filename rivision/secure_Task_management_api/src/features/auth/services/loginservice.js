@@ -1,4 +1,3 @@
-import { users } from "../../../data/users.js";
 import { tokenrepo } from "../../../Repositores/token.repository.js";
 import { userrepo } from "../../../Repositores/User.repository.js";
 import { comparePassword } from "../../../shared/utils/comparePassword.js";

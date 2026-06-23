@@ -1,6 +1,7 @@
 import { refreshTokens } from "../../../data/refreshTokens.js";
+import { tokenrepo } from "../../../Repositores/token.repository.js";
 import { verifyRefreshTokens } from "../../../shared/security/verifyRefreshToken.js";
-import { generateAccessToken } from "../../../shared/utils/jwt.js";
+import { generateAccessToken, generateRefreshToken } from "../../../shared/utils/jwt.js";
 
 export const refreshService = (refreshToken ) => {
   if (!refreshToken) {
@@ -11,7 +12,7 @@ export const refreshService = (refreshToken ) => {
     };
   }
 
-  const tokenExists = refreshTokens.includes(refreshToken);
+  const tokenExists = tokenrepo.checkExists(refreshToken);
 
   if (!tokenExists) {
     return {
@@ -20,6 +21,20 @@ export const refreshService = (refreshToken ) => {
       message: "Invalid token",
     };
   }
+
+
+  const BlackListed = tokenrepo.isBlcklisted(
+    refreshToken
+  );
+
+  if(BlackListed) {
+    return {
+      success : false,
+      statusCode : 401,
+      message : "refreshToken Blacklisted",
+    };
+  }
+
 
   const decoded = verifyRefreshTokens(refreshToken); 
 
@@ -33,9 +48,15 @@ export const refreshService = (refreshToken ) => {
   };
 
   const newAccessToken = generateAccessToken(payload);
+  const newRefreshToken = generateRefreshToken(payload);
+
+  tokenrepo.saveRefreshToken(newRefreshToken);
 
   return {
     success: true,
+    statusCode : 200,
     accessToken: newAccessToken,
+    refreshToken : newRefreshToken,
+    message : "Token refreshed Successfully",
   };
 };

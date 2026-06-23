@@ -16,10 +16,12 @@ export const refreshController = (req, res) => {
     return res.status(200).json({
       success: true,
       accessToken: result.accessToken,
+      refreshToken : result.refreshToken,
+      message : result.message,
     });
   } catch (error) {
     return res.status(403).json({
-      success: false,
+    success: false,
       message: "Token expired or invalid",
     });
   }
