@@ -1,8 +1,8 @@
 import { registerService } from "../services/registerService.js";
 
-export const registerController =  async (req, res) => {
+export const registerController = async (req, res) => {
   try {
-    const result = await  registerService(req.body);
+    const result = await registerService(req.body);
 
     if (!result.success) {
       return res.status(409).json({
@@ -10,13 +10,6 @@ export const registerController =  async (req, res) => {
         error: result.message,
       });
     }
-
-    req.session.user = result.sessionUser;
-
- 
-    
-
-    
 
     return res.status(result.statusCode).json({
       success: true,

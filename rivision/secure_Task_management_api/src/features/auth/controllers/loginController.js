@@ -2,7 +2,7 @@ import { loginService } from "../services/loginservice.js";
 
 export const loginController = async (req, res) => {
   try {
-    
+      
     const result = await loginService(req.body);
 
 
@@ -13,7 +13,7 @@ export const loginController = async (req, res) => {
       });
     }
 
-    req.session.user = result.sessionUser;
+   
 
     
     return res.status(result.statusCode).json({

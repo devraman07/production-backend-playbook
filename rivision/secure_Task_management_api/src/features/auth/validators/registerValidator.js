@@ -9,7 +9,7 @@ export const registerVlaidator = [
 
     body("email").notEmpty().withMessage("email required").isEmail().withMessage("invalid email format"),
 
-    body("password").notEmpty().withMessage("password required").isStrongPassword({
+    body("password_hash").notEmpty().withMessage("password required").isStrongPassword({
         minLength : 8,
         minNumbers : 1,
         minUppercase : 1,

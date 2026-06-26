@@ -1,48 +1,56 @@
-import { users } from "../data/users.js"
+import { eq } from "drizzle-orm";
 
-
+import { db } from "../DataBase/db.js";
+import { users } from "../DataBase/Schemas/users.js";
 
 export const userrepo = {
-    findByEmail(email) {
-        return users.find(
-        (user) => user.email === email
-   );
- },
+  
+  async findByEmail(email) {
+    const user = await db.select().from(users).where(eq(users.email, email));
 
- findById(id) {
-    return users.find(
-        (user) => user.id === id
-    );
- },
+    return user[0];
+  },
 
- findAll() {
-    return users;
- },
+  
+  async findById(id) {
+    const user = await db.select().from(users).where(eq(users.id, id));
 
- create(UserData) {
-    users.push(UserData);
- },
+    return user[0];
+  },
 
- update(id, updateData) {
-    const user = users.find(
-        (user) => user.id === id
-    );
+  
+  async findAll() {
+    return await db.select().from(users);
+  },
 
-    if(!user) return null;
-    Object.assign(user, updateData);
-        
-    },
+  
+  async create(userData) {
+    const [newUser] = await db
+      .insert(users)
+      .values(userData)
+      .returning();
 
-    delete(id) {
-        const userIndex = users.findIndex(
-            (user) => user.id === id
-        );
+    return newUser;
+  },
 
-        if(userIndex === -1) {
-            const deletedUser = users[userIndex];
-              users.splice(userIndex, 1);
-              return deletedUser;
+  
+  async update(id, updateData) {
+    const [updatedUser] = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.id, id))
+      .returning();
 
-        }
-    }
-}
+    return updatedUser;
+  },
+
+  
+  async delete(id) {
+    const [deletedUser] = await db
+      .delete(users)
+      .where(eq(users.id, id))
+      .returning();
+
+    return deletedUser;
+  },
+};

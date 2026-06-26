@@ -4,10 +4,7 @@ import { neon } from '@neondatabase/serverless';
 
 const sql = neon(process.env.DATABASE_URL);
 if(!sql) {
-    return {
-        success : false,
-        message : "Db connection failed"
-    };
+    console.log("db connection error");
 }
 
 export const db = drizzle(sql);

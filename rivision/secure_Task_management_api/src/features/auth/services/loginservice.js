@@ -1,25 +1,34 @@
 import { tokenrepo } from "../../../Repositores/token.repository.js";
 import { userrepo } from "../../../Repositores/User.repository.js";
 import { comparePassword } from "../../../shared/utils/comparePassword.js";
-import { generateAccessToken, generateRefreshToken } from "../../../shared/utils/jwt.js";
+import { generateHashedpassword } from "../../../shared/utils/hashedPassword.js";
+
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../../shared/utils/jwt.js";
 
 export const loginService = async ({ email, password }) => {
-  const user = userrepo.findByEmail(email);
+  const user = await userrepo.findByEmail(email);
+
   if (!user) {
     return {
       success: false,
-      statusCode : 404,
+      statusCode: 404,
       message: "User not found",
     };
   }
 
-  const correctpassword = await comparePassword(password, user.password);
+  const correctPassword = await comparePassword(
+    password,
+    user.passwordHash
+  );
 
-  if (!correctpassword) {
+  if (!correctPassword) {
     return {
       success: false,
-      status : 401,
-      message: "wrong password",
+      statusCode: 401,
+      message: "Wrong password",
     };
   }
 
@@ -27,31 +36,35 @@ export const loginService = async ({ email, password }) => {
     id: user.id,
     name: user.name,
     email: user.email,
-    role: user.role,
   };
 
   const accessToken = generateAccessToken(payload);
-
   const refreshToken = generateRefreshToken(payload);
 
-  tokenrepo.saveRefreshToken(refreshToken);
+  // hash refresh token before saving
+  const hashedRefreshToken =
+    await generateHashedpassword(refreshToken);
+
+  await tokenrepo.saveRefreshToken({
+    userId: user.id,
+    tokenHash: hashedRefreshToken,
+    expiresAt: new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000
+    ),
+  });
 
   const safeUser = {
     id: user.id,
     name: user.name,
     email: user.email,
-    role: user.role,
   };
-
-  
 
   return {
     success: true,
-    statusCode : 200,
-    message : "User Login successfull",
+    statusCode: 200,
+    message: "User login successful",
     user: safeUser,
-    sessionUser : safeUser,
-    accessToken : accessToken,
-    refreshToken : refreshToken,
+    accessToken,
+    refreshToken,
   };
 };

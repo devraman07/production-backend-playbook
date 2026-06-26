@@ -1,36 +1,76 @@
-
-
-import { blacklistedTokens } from "../data/blacklistedTokens.js";
-import {refreshTokens} from "../data/refreshTokens.js";
-
+import { and, eq } from "drizzle-orm";
+import { db } from "../DataBase/db.js";
+import { refreshTokens } from "../DataBase/Schemas/refreshTokens.js";
 
 export const tokenrepo = {
-    saveRefreshToken(token) {
-        refreshTokens.push(token);
-        return token;
-    },
+  
+  async saveRefreshToken(token) {
+    const [newToken] = await db
+      .insert(refreshTokens)
+      .values(token)
+      .returning();
 
-    checkExists(token) {
-        refreshTokens.includes(token);
-        return token;
-    },
+    return newToken;
+  },
 
-    removeToken(token) {
-        const tokenIndex = refreshTokens.indexOf(token);
+  
+  async findUserToken(userId) {
+    const tokens = await db
+      .select()
+      .from(refreshTokens)
+      .where(eq(refreshTokens.userId, userId));
 
-        if(tokenIndex !== -1) {
-              refreshTokens.splice(tokenIndex, 1)
-        }
+    return tokens;
+  },
 
-        return tokenIndex;
-     },
+  
+  async findAllActiveTokens(userId) {
+    const tokens = await db
+      .select()
+      .from(refreshTokens)
+      .where(
+        and(
+          eq(refreshTokens.userId, userId),
+          eq(refreshTokens.isRevoked, false)
+        )
+      );
 
-     blacklist(Token) {
-        blacklistedTokens.push(token);
+    return tokens;
+  },
 
-     },
+  
+  async revokedTokens(id) {
+    const [revokedToken] = await db
+      .update(refreshTokens)
+      .set({
+        isRevoked: true,
+      })
+      .where(eq(refreshTokens.id, id))
+      .returning();
 
-     isBlcklisted(token) {
-        return blacklistedTokens.includes(token);
-     }
-}
+    return revokedToken;
+  },
+
+  
+  async deleteToken(id) {
+    const [deletedToken] = await db
+      .delete(refreshTokens)
+      .where(eq(refreshTokens.id, id))
+      .returning();
+
+    return deletedToken;
+  },
+
+  
+  async revokeAllUserToken(userId) {
+    const revokedTokens = await db
+      .update(refreshTokens)
+      .set({
+        isRevoked: true,
+      })
+      .where(eq(refreshTokens.userId, userId))
+      .returning();
+
+    return revokedTokens;
+  },
+};

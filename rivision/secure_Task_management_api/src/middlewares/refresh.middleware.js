@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { blacklistedTokens } from "../data/blacklistedTokens.js";
 
 export const refreshMiddleware = (req, res, next) => {
   try {
@@ -8,18 +7,18 @@ export const refreshMiddleware = (req, res, next) => {
     if (!refreshToken) {
       return res.status(401).json({
         success: false,
-        message: "Refresh Token missing",
+        message: "Refresh token missing",
       });
     }
 
-    const tokenExists = blacklistedTokens.includes(refreshToken);
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET
+    );
 
-    if (!tokenExists) {
-      return res.status(403).json({
-        success: false,
-        message: "Invalid refresh token",
-      });
-    }
+    req.refreshUser = decoded;
+
+    next();
   } catch (error) {
     return res.status(403).json({
       success: false,

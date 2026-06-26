@@ -1,62 +1,83 @@
-import { refreshTokens } from "../../../data/refreshTokens.js";
 import { tokenrepo } from "../../../Repositores/token.repository.js";
-import { verifyRefreshTokens } from "../../../shared/security/verifyRefreshToken.js";
-import { generateAccessToken, generateRefreshToken } from "../../../shared/utils/jwt.js";
+import { comparePassword } from "../../../shared/utils/comparePassword.js";
+import { generateHashedpassword } from "../../../shared/utils/hashedPassword.js";
 
-export const refreshService = (refreshToken ) => {
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../../shared/utils/jwt.js";
+
+export const refreshService = async (
+  refreshToken,
+  refreshUser
+) => {
   if (!refreshToken) {
     return {
       success: false,
       statusCode: 401,
-      message: "refreshToken not here",
+      message: "Refresh token missing",
     };
   }
 
-  const tokenExists = tokenrepo.checkExists(refreshToken);
+  // get all active tokens of user
+  const activeTokens = await tokenrepo.findAllActiveTokens(
+    refreshUser.id
+  );
 
-  if (!tokenExists) {
+  let matchedToken = null;
+
+  // compare raw token against hashed tokens
+  for (const token of activeTokens) {
+    const isMatch = await comparePassword(
+      refreshToken,
+      token.tokenHash
+    );
+
+    if (isMatch) {
+      matchedToken = token;
+      break;
+    }
+  }
+
+  if (!matchedToken) {
     return {
       success: false,
       statusCode: 403,
-      message: "Invalid token",
+      message: "Session not found",
     };
   }
 
-
-  const BlackListed = tokenrepo.isBlcklisted(
-    refreshToken
-  );
-
-  if(BlackListed) {
-    return {
-      success : false,
-      statusCode : 401,
-      message : "refreshToken Blacklisted",
-    };
-  }
-
-
-  const decoded = verifyRefreshTokens(refreshToken); 
-
-
+  // revoke old token
+  await tokenrepo.revokedTokens(matchedToken.id);
 
   const payload = {
-    id: decoded.id,
-    name: decoded.name,
-    email: decoded.email,
-    role: decoded.role,
+    id: refreshUser.id,
+    name: refreshUser.name,
+    email: refreshUser.email,
   };
 
+  // generate new tokens
   const newAccessToken = generateAccessToken(payload);
   const newRefreshToken = generateRefreshToken(payload);
 
-  tokenrepo.saveRefreshToken(newRefreshToken);
+  // hash new refresh token
+  const hashedRefreshToken =
+    await generateHashedpassword(newRefreshToken);
+
+  // save rotated token
+  await tokenrepo.saveRefreshToken({
+    userId: refreshUser.id,
+    tokenHash: hashedRefreshToken,
+    expiresAt: new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000
+    ),
+  });
 
   return {
     success: true,
-    statusCode : 200,
+    statusCode: 200,
     accessToken: newAccessToken,
-    refreshToken : newRefreshToken,
-    message : "Token refreshed Successfully",
+    refreshToken: newRefreshToken,
+    message: "Token refreshed successfully",
   };
 };

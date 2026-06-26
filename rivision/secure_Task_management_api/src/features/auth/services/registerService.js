@@ -1,11 +1,18 @@
-import { ROLES } from "../../../data/roles.js";
-import { users } from "../../../data/users.js";
 import { tokenrepo } from "../../../Repositores/token.repository.js";
 import { userrepo } from "../../../Repositores/User.repository.js";
 import { generateHashedpassword } from "../../../shared/utils/hashedPassword.js";
-import { generateAccessToken, generateRefreshToken } from "../../../shared/utils/jwt.js";
+import { generateHashedpassword as hashToken } from "../../../shared/utils/hashedPassword.js";
 
-export const registerService = async ({ name, email, password }) => {
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../../shared/utils/jwt.js";
+
+export const registerService = async ({
+  name,
+  email,
+  password,
+}) => {
   try {
     if (!name || !email || !password) {
       return {
@@ -14,59 +21,69 @@ export const registerService = async ({ name, email, password }) => {
       };
     }
 
-    const existingUser = users.find((u) => u.email === email);
+    // check existing user
+    const existingUser = await userrepo.findByEmail(email);
 
     if (existingUser) {
       return {
         success: false,
-        error: "user already exists",
+        message: "user already exists",
       };
     }
 
-    const hashedPassword = await generateHashedpassword(password);
+    // hash password
+    const hashedPassword =
+      await generateHashedpassword(password);
 
-    const newUser = {
-      id: crypto.randomUUID(),
-      name: name,
-      email: email,
-      password: hashedPassword,
-      role: ROLES.MEMBER,
-    };
-
-    userrepo.create(newUser);
+    // create user
+    const newUser = await userrepo.create({
+      name,
+      email,
+      passwordHash: hashedPassword,
+    });
 
     const payload = {
-      id: result.user.id,
-      name: result.user.name,
-      email: result.user.email,
-      role: result.user.role,
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
     };
 
+    // generate tokens
     const refreshToken = generateRefreshToken(payload);
-
     const accessToken = generateAccessToken(payload);
-    tokenrepo.saveRefreshToken(refreshToken);
+
+    // hash refresh token before saving
+    const hashedRefreshToken =
+      await hashToken(refreshToken);
+
+    await tokenrepo.saveRefreshToken({
+      userId: newUser.id,
+      tokenHash: hashedRefreshToken,
+      expiresAt: new Date(
+        Date.now() + 7 * 24 * 60 * 60 * 1000
+      ),
+    });
 
     const safeUser = {
       id: newUser.id,
       name: newUser.name,
       email: newUser.email,
-      role: newUser.role,
     };
 
     return {
       success: true,
       user: safeUser,
-      statusCode : 201,
-      sessionUser : safeUser,
-      accessToken : accessToken,
-      refreshToken : refreshToken,
-      message : "User registered Successfylly",
+      statusCode: 201,
+      accessToken,
+      refreshToken,
+      message: "User registered successfully",
     };
   } catch (error) {
+    console.log(error);
     return {
+      
       success: false,
-      error: "internal server error in service layer",
+      message: "internal server error in service layer",
     };
   }
 };

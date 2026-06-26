@@ -1,26 +1,30 @@
-import { blacklistedTokens } from "../../../data/blacklistedTokens.js";
-import { refreshTokens } from "../../../data/refreshTokens.js";
 import { tokenrepo } from "../../../Repositores/token.repository.js";
+import { verifyRefreshTokens } from "../../../shared/security/verifyRefreshToken.js";
 
-export const logOutService = (refreshToken) => {
+export const logOutService = async (refreshToken) => {
   if (!refreshToken) {
     return {
       success: false,
       statusCode: 401,
-      message: "refreshToken not here",
+      message: "Refresh token missing",
     };
   }
 
-  const tokenexists = tokenrepo.checkExists(refreshToken);
+  const validToken = verifyRefreshTokens(refreshToken);
 
-  if (tokenexists) {
-    tokenrepo.blacklist(refreshToken);
-
-    tokenrepo.removeToken(refreshToken);
+  if (!validToken) {
+    return {
+      success: false,
+      statusCode: 401,
+      message: "Unverified refresh token",
+    };
   }
+
+  await tokenrepo.revokeAllUserToken(validToken.id);
 
   return {
     success: true,
-    message: "logged out successfully",
+    statusCode: 200,
+    message: "Logged out successfully",
   };
 };

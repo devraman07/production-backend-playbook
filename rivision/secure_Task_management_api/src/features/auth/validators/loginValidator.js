@@ -8,7 +8,7 @@ export const loginValidator = [
     ).isEmail().withMessage(
         "invalid email"
     ),
-    body("password").notEmpty().withMessage(
+    body("password_hash").notEmpty().withMessage(
         "password is required"
     )
 ]
