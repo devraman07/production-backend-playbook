@@ -3,13 +3,7 @@ import { blacklistedTokens } from "../data/blacklistedTokens.js";
 
 export const authMiddleware = (req, res, next) => {
   try {
-    if (req.session?.user) {
-      req.user = req.session.user;
-
-      return next();
-    }
-
-    const authHeader  = req.headers.authorization;
+     const authHeader  = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer")) {
       return res.status(401).json({

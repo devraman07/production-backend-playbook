@@ -39,7 +39,7 @@ export const userrepo = {
       .update(users)
       .set(updateData)
       .where(eq(users.id, id))
-      .returning();
+       .returning();
 
     return updatedUser;
   },
@@ -53,4 +53,4 @@ export const userrepo = {
 
     return deletedUser;
   },
-};
+};                                                                               

@@ -24,6 +24,7 @@ export const loginController = async (req, res) => {
       refreshToken: result.refreshToken,
     });
   } catch (error) {
+    
     return res.status(500).json({
       success: false,
       data: null,
