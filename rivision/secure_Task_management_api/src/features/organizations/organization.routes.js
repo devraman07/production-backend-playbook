@@ -1,12 +1,29 @@
-import express from 'express';
-import { authMiddleware } from '../../middlewares/auth.middileware.js';
+import express from "express";
+import { authMiddleware } from "../../middlewares/auth.middileware.js";
 
-import { createOrgValidator } from './organization.validator.js';
-import { createOrgController } from './organization.controller.js';
+import { createOrgValidator } from "./organization.validator.js";
+import {
+  createOrgController,
+  deleteOrgController,
+  getMyOwnedOrgController,
+  singleOrgController,
+  updateOrgController,
+} from "./organization.controller.js";
+import { organizationMemberShipRouter } from "../memberships/organizationMembership.js";
 
- export const orgRouter = express.Router();
+export const orgRouter = express.Router();
 
-orgRouter.post("/", authMiddleware, 
-    createOrgValidator,
-    createOrgController
- );
+orgRouter.post("/", authMiddleware, createOrgValidator, createOrgController);
+
+orgRouter.get("/", authMiddleware, getMyOwnedOrgController);
+orgRouter.patch(
+  "/:id",
+  authMiddleware,
+  createOrgValidator,
+  updateOrgController,
+);
+
+orgRouter.delete("/:id", authMiddleware, deleteOrgController);
+orgRouter.get("/:id", authMiddleware, singleOrgController);
+orgRouter.use("/:organizationId/members", organizationMemberShipRouter);
+

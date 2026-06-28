@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { db } from "../../DataBase/db.js";
 import { organizations } from "../../DataBase/Schemas/organizations.js";
 
@@ -11,6 +11,8 @@ export const organizationRepo = {
 
     return newOrg;
   },
+
+  
 
   async findById(executor = db, id) {
     const org = await executor
@@ -44,12 +46,41 @@ export const organizationRepo = {
     return allOrgs;
   },
 
-  async delete(executor = db, id) {
-    const [deletedOrg] = await executor
-      .delete(organizations)
-      .where(eq(organizations.id, id))
-      .returning();
+  async softDelete(executor = db, id) {
+  const [deletedOrg] = await executor
+    .update(organizations)
+    .set({
+      isDeleted: true,
+      deletedAt: new Date(),
+    })
+    .where(eq(organizations.id, id))
+    .returning();
 
-    return deletedOrg;
+  return deletedOrg;
+},
+
+  async findDuplicateForUpdate (executor = db, orgid, name, createdBy)  {
+       const duplicate = await  executor.select().from(organizations).where(
+        and(
+          eq(organizations.name, name),
+          eq(organizations.createdBy, createdBy),
+          ne(organizations.id, orgid)
+        )
+       )
+
+       return duplicate[0];
   },
+
+  async update(executor = db, id, organizationData) {
+  const [updatedOrg] = await executor
+    .update(organizations)
+    .set({
+      name: organizationData.name,
+    })
+    .where(eq(organizations.id, id))
+    .returning();
+
+  return updatedOrg;
+}
+  
 };
