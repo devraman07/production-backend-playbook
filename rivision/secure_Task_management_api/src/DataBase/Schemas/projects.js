@@ -11,10 +11,14 @@ import { sql } from "drizzle-orm";
 
 import { organizations } from "./organizations.js";
 import { memberships } from "./membership.js";
+import { users } from "./users.js";
+import { boolean } from "drizzle-orm/gel-core";
 
 export const projectStatusEnum = pgEnum("project_status", [
   "ACTIVE",
-  "ARCHIVED",
+  "PLANNING",
+  "COMPLETED",
+  "ON_HOLD"
 ]);
 
 export const projects = pgTable(
@@ -36,23 +40,20 @@ export const projects = pgTable(
 
     description: text("description"),
 
-    managerId: uuid("manager_id")
-      .references(() => memberships.id, {
-        onDelete: "restrict",
-      }),
+    managerId: uuid("manager_id").references(() => memberships.id, {
+      onDelete: "restrict",
+    }),
 
-    status: projectStatusEnum("status")
-      .default("ACTIVE")
-      .notNull(),
+    status: projectStatusEnum("status").default("ACTIVE").notNull(),
 
-    createdAt: timestamp("created_at")
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    
+    isArchived : boolean("is_archived")
+  .default(false)
+  .notNull()
+    
   },
   (table) => ({
-    uniqueProjectName: unique().on(
-      table.organizationId,
-      table.name
-    ),
-  })
+    uniqueProjectName: unique().on(table.organizationId, table.name),
+  }),
 );

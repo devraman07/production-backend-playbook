@@ -10,6 +10,7 @@ import {
   updateOrgController,
 } from "./organization.controller.js";
 import { organizationMemberShipRouter } from "../memberships/organizationMembership.js";
+import { projectOrganizationRouter } from "../projects/projectOrganization.routes.js";
 
 export const orgRouter = express.Router();
 
@@ -26,4 +27,4 @@ orgRouter.patch(
 orgRouter.delete("/:id", authMiddleware, deleteOrgController);
 orgRouter.get("/:id", authMiddleware, singleOrgController);
 orgRouter.use("/:organizationId/members", organizationMemberShipRouter);
-
+orgRouter.use("/:organizationId/projects", projectOrganizationRouter);

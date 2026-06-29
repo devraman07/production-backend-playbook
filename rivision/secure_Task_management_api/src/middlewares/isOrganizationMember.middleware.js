@@ -10,14 +10,17 @@ export const checkIsOrgMember = async (req, res, next) => {
       organizationId,
     );
 
+   
+
     if (!memberShip) {
       return res.status(403).json({
         success: false,
-        message: "Forbidden",
+        message: "not a member",
+
       });
     }
 
-    req.memberShip = memberShip;
+    req.membership = memberShip;
 
     next();
   } catch (error) {

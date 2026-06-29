@@ -7,7 +7,7 @@ import { userRouter } from "./features/users/routes/userRoutes.js";
 import { taskRouter } from "./features/tasks/routes/task.routes.js";
 import { orgRouter } from "./features/organizations/organization.routes.js";
 import { memberShipRouter } from "./features/memberships/memberships.routes.js";
-
+import { projectRouter } from "./features/projects/project.route.js";
 dotenv.config();
 
 const app = express();
@@ -27,6 +27,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/organizations", orgRouter);
 app.use("/api/v1/memberships", memberShipRouter);
+app.use("/api/v1/projects", projectRouter);
 
 app.get("/", (req, res) => {
     res.send("Task management api working");

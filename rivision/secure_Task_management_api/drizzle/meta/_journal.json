@@ -57,6 +57,27 @@
       "when": 1782679219294,
       "tag": "0007_jazzy_havok",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1782768627047,
+      "tag": "0008_ancient_famine",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1782768794081,
+      "tag": "0009_quick_carlie_cooper",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1782769473649,
+      "tag": "0010_warm_chimera",
+      "breakpoints": true
     }
   ]
 }
