@@ -9,6 +9,7 @@ import {
 } from "./project.controller.js";
 
 import { updateProjectValidator } from "./project.validator.js";
+import { projectTaskRouter } from "../tasks/ProjectTask.route.js";
 
 export const projectRouter = express.Router();
 
@@ -31,3 +32,5 @@ projectRouter.delete(
   authMiddleware,
   archiveprojectController
 );
+
+projectRouter.use("/:projectId", projectTaskRouter);
